@@ -2,6 +2,9 @@ import type React from "react"
 import type { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
+import { LoadingScreen } from "@/components/loading-screen"
+import { ScrollProgress } from "@/components/scroll-progress"
+import { AnimatedBackground } from "@/components/animated-background"
 import "./globals.css"
 
 const _geist = Geist({ subsets: ["latin"] })
@@ -44,6 +47,9 @@ export default function RootLayout({
         <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
       </head>
       <body className={`font-sans antialiased bg-background text-foreground`}>
+        <LoadingScreen />
+        <ScrollProgress />
+        <AnimatedBackground />
         {children}
         <Analytics />
       </body>
