@@ -1,14 +1,19 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { Geist, Geist_Mono } from "next/font/google"
+import { Poppins } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { LoadingScreen } from "@/components/loading-screen"
-import { ScrollProgress } from "@/components/scroll-progress"
 import { AnimatedBackground } from "@/components/animated-background"
+import { MagneticCursor } from "@/components/magnetic-cursor"
+import { ParticleSystem } from "@/components/particle-system"
 import "./globals.css"
 
-const _geist = Geist({ subsets: ["latin"] })
-const _geistMono = Geist_Mono({ subsets: ["latin"] })
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700", "800"],
+  variable: "--font-poppins",
+  display: "swap",
+})
 
 export const metadata: Metadata = {
   title: "Culinary Fresh - Premium Fish & Meat",
@@ -46,9 +51,10 @@ export default function RootLayout({
         <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
       </head>
-      <body className={`font-sans antialiased bg-background text-foreground`}>
+      <body className={`${poppins.variable} font-sans antialiased bg-background text-foreground`}>
+        <MagneticCursor />
+        <ParticleSystem />
         <LoadingScreen />
-        <ScrollProgress />
         <AnimatedBackground />
         {children}
         <Analytics />

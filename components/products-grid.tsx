@@ -3,9 +3,7 @@
 import { useEffect, useRef } from "react"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
-import { ShoppingCart, Heart } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { useState } from "react"
+import { Star } from "lucide-react"
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -16,6 +14,8 @@ const products = [
     category: "Fish",
     price: 24.99,
     rating: 4.8,
+    reviews: 124,
+    tag: "Fresh",
     image: "/fresh-atlantic-salmon-fillet.jpg",
     description: "Premium fresh Atlantic salmon fillet",
   },
@@ -25,6 +25,8 @@ const products = [
     category: "Fish",
     price: 29.99,
     rating: 4.9,
+    reviews: 98,
+    tag: "Wild",
     image: "/wild-caught-tuna-premium.jpg",
     description: "Premium wild-caught yellowfin tuna",
   },
@@ -34,6 +36,8 @@ const products = [
     category: "Meat",
     price: 34.99,
     rating: 4.7,
+    reviews: 156,
+    tag: "Premium",
     image: "/grass-fed-beef-steak-premium.jpg",
     description: "Premium grass-fed beef ribeye steak",
   },
@@ -43,6 +47,8 @@ const products = [
     category: "Meat",
     price: 18.99,
     rating: 4.6,
+    reviews: 203,
+    tag: "Organic",
     image: "/organic-free-range-chicken-breast.jpg",
     description: "Organic free-range chicken breast",
   },
@@ -52,6 +58,8 @@ const products = [
     category: "Fish",
     price: 22.99,
     rating: 4.7,
+    reviews: 87,
+    tag: "Fresh",
     image: "/fresh-sea-bream-whole-fish.jpg",
     description: "Fresh whole sea bream",
   },
@@ -61,6 +69,8 @@ const products = [
     category: "Meat",
     price: 32.99,
     rating: 4.8,
+    reviews: 142,
+    tag: "Premium",
     image: "/premium-lamb-chops-fresh.jpg",
     description: "Premium lamb chops",
   },
@@ -70,6 +80,8 @@ const products = [
     category: "Fish",
     price: 26.99,
     rating: 4.9,
+    reviews: 176,
+    tag: "Fresh",
     image: "/fresh-large-shrimp-prawns.jpg",
     description: "Fresh large tiger shrimp",
   },
@@ -79,6 +91,8 @@ const products = [
     category: "Meat",
     price: 28.99,
     rating: 4.8,
+    reviews: 91,
+    tag: "Premium",
     image: "/premium-duck-breast-fresh.jpg",
     description: "Premium duck breast",
   },
@@ -87,7 +101,6 @@ const products = [
 export function ProductsGrid() {
   const containerRef = useRef<HTMLDivElement>(null)
   const cardsRef = useRef<(HTMLDivElement | null)[]>([])
-  const [favorites, setFavorites] = useState<Set<number>>(new Set())
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -111,15 +124,21 @@ export function ProductsGrid() {
     return () => ctx.revert()
   }, [])
 
-  const toggleFavorite = (id: number) => {
-    setFavorites((prev) => {
-      const newSet = new Set(prev)
-      if (newSet.has(id)) {
-        newSet.delete(id)
-      } else {
-        newSet.add(id)
-      }
-      return newSet
+  const handleMouseEnter = (index: number) => {
+    if (!cardsRef.current[index]) return
+    gsap.to(cardsRef.current[index], {
+      y: -10,
+      duration: 0.3,
+      ease: "power2.out",
+    })
+  }
+
+  const handleMouseLeave = (index: number) => {
+    if (!cardsRef.current[index]) return
+    gsap.to(cardsRef.current[index], {
+      y: 0,
+      duration: 0.3,
+      ease: "power2.out",
     })
   }
 
@@ -130,68 +149,51 @@ export function ProductsGrid() {
           <div
             key={product.id}
             ref={(el) => {
-              cardsRef.current[index] = el
+              if (el) cardsRef.current[index] = el as HTMLDivElement
             }}
-            className="bg-card rounded-lg overflow-hidden border border-border hover:border-secondary/50 transition-all duration-300 group"
+            onMouseEnter={() => handleMouseEnter(index)}
+            onMouseLeave={() => handleMouseLeave(index)}
+            className="group bg-card rounded-xl overflow-hidden border border-border hover:border-secondary/50 transition-all duration-300 cursor-pointer"
           >
-            {/* Product Image */}
-            <div className="relative h-64 overflow-hidden bg-muted">
+            {/* Image Container */}
+            <div className="relative h-56 sm:h-64 overflow-hidden bg-muted">
               <img
                 src={product.image || "/placeholder.svg"}
                 alt={product.name}
-                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
               />
               <div className="absolute top-3 right-3">
-                <button
-                  onClick={() => toggleFavorite(product.id)}
-                  className="p-2 bg-background/80 backdrop-blur-sm rounded-full hover:bg-background transition-colors"
-                  aria-label="Add to favorites"
-                >
-                  <Heart
-                    className={`w-5 h-5 ${
-                      favorites.has(product.id) ? "fill-secondary text-secondary" : "text-foreground/60"
-                    } transition-colors`}
-                  />
-                </button>
-              </div>
-              <div className="absolute top-3 left-3">
-                <span className="px-3 py-1 bg-secondary/90 text-secondary-foreground text-xs font-semibold rounded-full">
-                  {product.category}
+                <span className="px-3 py-1 text-xs font-semibold text-primary-foreground bg-primary rounded-full">
+                  {product.tag}
                 </span>
               </div>
             </div>
 
-            {/* Product Info */}
-            <div className="p-4 space-y-3">
-              <div>
-                <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors">
-                  {product.name}
-                </h3>
-                <p className="text-sm text-foreground/60">{product.description}</p>
-              </div>
-
+            {/* Content */}
+            <div className="p-4 sm:p-5">
+              <p className="text-xs sm:text-sm text-muted-foreground uppercase tracking-wide mb-2">
+                {product.category}
+              </p>
+              <h3 className="text-lg sm:text-xl font-bold text-foreground mb-3 line-clamp-2">{product.name}</h3>
               {/* Rating */}
-              <div className="flex items-center gap-2">
-                <div className="flex items-center">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="flex items-center gap-1">
                   {[...Array(5)].map((_, i) => (
-                    <span
+                    <Star
                       key={i}
-                      className={`text-lg ${i < Math.floor(product.rating) ? "text-secondary" : "text-border"}`}
-                    >
-                      ★
-                    </span>
+                      className={`w-4 h-4 ${i < Math.floor(product.rating)
+                          ? "fill-secondary text-secondary"
+                          : "text-muted"
+                        }`}
+                    />
                   ))}
                 </div>
-                <span className="text-sm text-foreground/60">({product.rating})</span>
+                <span className="text-xs text-muted-foreground">
+                  {product.rating} ({product.reviews})
+                </span>
               </div>
 
-              {/* Price and CTA */}
-              <div className="flex items-center justify-between pt-2">
-                <div className="text-2xl font-bold text-primary">${product.price.toFixed(2)}</div>
-                <Button size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground">
-                  <ShoppingCart className="w-4 h-4" />
-                </Button>
-              </div>
+
             </div>
           </div>
         ))}

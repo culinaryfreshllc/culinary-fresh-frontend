@@ -102,18 +102,7 @@ export function FeaturesSection() {
         })
       })
 
-      // Animate icons with continuous subtle rotation
-      iconsRef.current.forEach((icon, index) => {
-        if (!icon || window.innerWidth < 768) return
 
-        gsap.to(icon, {
-          rotate: 5,
-          duration: 2 + index * 0.5,
-          repeat: -1,
-          yoyo: true,
-          ease: "sine.inOut",
-        })
-      })
     }, containerRef)
 
     return () => ctx.revert()
@@ -158,8 +147,8 @@ export function FeaturesSection() {
                   }}
                   className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4 group-hover:bg-secondary/10 transition-colors relative overflow-hidden"
                 >
-                  {/* Rotating background gradient */}
-                  <div className={`absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20 ${prefersReducedMotion ? '' : 'animate-spin-slow'} -z-10`} />
+                  {/* Static background gradient */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20 -z-10" />
                   <Icon className="w-6 h-6 text-primary group-hover:text-secondary transition-colors relative z-10" />
                 </div>
                 <h3 className="text-lg font-semibold mb-2 text-foreground group-hover:text-primary transition-colors">

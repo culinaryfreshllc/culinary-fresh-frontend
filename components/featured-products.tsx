@@ -22,7 +22,7 @@ export function FeaturedProducts() {
     const ctx = gsap.context(() => {
       cardsRef.current.forEach((card, index) => {
         if (!card) return
-        
+
         gsap.from(card, {
           scrollTrigger: {
             trigger: card,
@@ -118,11 +118,10 @@ export function FeaturedProducts() {
                     {[...Array(5)].map((_, i) => (
                       <Star
                         key={i}
-                        className={`w-4 h-4 ${
-                          i < Math.floor(product.rating)
+                        className={`w-4 h-4 ${i < Math.floor(product.rating)
                             ? "fill-secondary text-secondary"
                             : "text-muted"
-                        }`}
+                          }`}
                       />
                     ))}
                   </div>
@@ -131,15 +130,7 @@ export function FeaturedProducts() {
                   </span>
                 </div>
 
-                {/* Price and Button */}
-                <div className="flex items-center justify-between">
-                  <span className="text-2xl sm:text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                    ${product.price}
-                  </span>
-                  <button className="px-3 sm:px-4 py-2 bg-secondary text-secondary-foreground rounded-lg font-semibold text-sm hover:bg-secondary/90 transition-colors duration-200">
-                    Add
-                  </button>
-                </div>
+
               </div>
             </div>
           ))}

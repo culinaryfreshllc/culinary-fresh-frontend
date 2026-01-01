@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { useState, useEffect, useRef } from "react"
-import { Menu, X, ShoppingCart } from "lucide-react"
+import { Menu, X } from "lucide-react"
 import { useReducedMotion } from "@/lib/hooks/use-reduced-motion"
 import gsap from "gsap"
 
@@ -13,7 +13,6 @@ export function Header() {
   const headerRef = useRef<HTMLElement>(null)
   const logoRef = useRef<HTMLDivElement>(null)
   const navItemsRef = useRef<(HTMLAnchorElement | null)[]>([])
-  const cartRef = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -83,28 +82,7 @@ export function Header() {
     }
   }, [prefersReducedMotion])
 
-  // Cart bounce effect
-  useEffect(() => {
-    if (prefersReducedMotion || !cartRef.current) return
 
-    const cart = cartRef.current
-
-    const handleMouseEnter = () => {
-      gsap.to(cart.querySelector("svg"), {
-        y: -3,
-        duration: 0.3,
-        ease: "power2.out",
-        yoyo: true,
-        repeat: 1,
-      })
-    }
-
-    cart.addEventListener("mouseenter", handleMouseEnter)
-
-    return () => {
-      cart.removeEventListener("mouseenter", handleMouseEnter)
-    }
-  }, [prefersReducedMotion])
 
   const navItems = [
     { label: "Home", href: "/" },
@@ -149,13 +127,6 @@ export function Header() {
 
         {/* Right side actions */}
         <div className="flex items-center gap-4">
-          <button
-            ref={cartRef}
-            className="p-2 hover:bg-secondary/10 rounded-lg transition-all hidden sm:block group"
-          >
-            <ShoppingCart className="w-5 h-5 text-foreground group-hover:text-secondary transition-colors" />
-          </button>
-
           {/* Mobile menu button */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}

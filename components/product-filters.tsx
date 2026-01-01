@@ -10,7 +10,7 @@ interface ProductFiltersProps {
 
 export function ProductFilters({ selectedCategory, onCategoryChange }: ProductFiltersProps) {
   const [isPending, startTransition] = useTransition()
-  
+
   const handleCategoryClick = (category: string) => {
     startTransition(() => {
       onCategoryChange(category)
@@ -28,40 +28,14 @@ export function ProductFilters({ selectedCategory, onCategoryChange }: ProductFi
               key={category}
               onClick={() => handleCategoryClick(category)}
               disabled={isPending}
-              className={`w-full text-left px-4 py-2 rounded-lg transition-all duration-200 ${
-                selectedCategory === category
+              className={`w-full text-left px-4 py-2 rounded-lg transition-all duration-200 ${selectedCategory === category
                   ? "bg-primary text-primary-foreground font-semibold"
                   : "bg-muted text-foreground hover:bg-primary/10"
-              } disabled:opacity-50`}
+                } disabled:opacity-50`}
             >
               {category}
             </button>
           ))}
-        </div>
-      </div>
-
-      {/* Price Range Filter */}
-      <div className="bg-card border border-border rounded-lg p-4 md:p-6">
-        <h3 className="font-bold text-lg mb-4 text-foreground">Price Range</h3>
-        <div className="space-y-3">
-          <div>
-            <label className="flex items-center gap-3">
-              <input type="checkbox" defaultChecked className="w-4 h-4 rounded border-primary cursor-pointer" />
-              <span className="text-sm text-foreground">Under $25</span>
-            </label>
-          </div>
-          <div>
-            <label className="flex items-center gap-3">
-              <input type="checkbox" defaultChecked className="w-4 h-4 rounded border-primary cursor-pointer" />
-              <span className="text-sm text-foreground">$25 - $50</span>
-            </label>
-          </div>
-          <div>
-            <label className="flex items-center gap-3">
-              <input type="checkbox" defaultChecked className="w-4 h-4 rounded border-primary cursor-pointer" />
-              <span className="text-sm text-foreground">Above $50</span>
-            </label>
-          </div>
         </div>
       </div>
 
