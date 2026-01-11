@@ -6,6 +6,7 @@ import { LoadingScreen } from "@/components/loading-screen"
 import { AnimatedBackground } from "@/components/animated-background"
 import { MagneticCursor } from "@/components/magnetic-cursor"
 import { ParticleSystem } from "@/components/particle-system"
+import { ThemeProvider } from "@/components/theme-provider"
 import "./globals.css"
 
 const poppins = Poppins({
@@ -52,12 +53,19 @@ export default function RootLayout({
         <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
       </head>
       <body className={`${poppins.variable} font-sans antialiased bg-background text-foreground`}>
-        <MagneticCursor />
-        <ParticleSystem />
-        <LoadingScreen />
-        <AnimatedBackground />
-        {children}
-        <Analytics />
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <MagneticCursor />
+          <ParticleSystem />
+          <LoadingScreen />
+          <AnimatedBackground />
+          {children}
+          <Analytics />
+        </ThemeProvider>
       </body>
     </html>
   )

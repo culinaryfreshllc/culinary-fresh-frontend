@@ -8,10 +8,16 @@ export function MagneticCursor() {
     const cursorRef = useRef<HTMLDivElement>(null)
     const cursorDotRef = useRef<HTMLDivElement>(null)
     const [isPointer, setIsPointer] = useState(false)
+    const [isMounted, setIsMounted] = useState(false)
     const prefersReducedMotion = useReducedMotion()
 
+    // Track when component is mounted on client
     useEffect(() => {
-        if (prefersReducedMotion || typeof window === "undefined") return
+        setIsMounted(true)
+    }, [])
+
+    useEffect(() => {
+        if (prefersReducedMotion || typeof window === "undefined" || !isMounted) return
 
         const cursor = cursorRef.current
         const cursorDot = cursorDotRef.current
@@ -93,9 +99,9 @@ export function MagneticCursor() {
                 el.removeEventListener("mouseleave", handleMouseLeave as EventListener)
             })
         }
-    }, [prefersReducedMotion])
+    }, [prefersReducedMotion, isMounted])
 
-    if (prefersReducedMotion || typeof window === "undefined") return null
+    if (prefersReducedMotion || !isMounted) return null
 
     return (
         <>

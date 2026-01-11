@@ -5,6 +5,8 @@ import { useState, useEffect, useRef } from "react"
 import { Menu, X } from "lucide-react"
 import { useReducedMotion } from "@/lib/hooks/use-reduced-motion"
 import gsap from "gsap"
+import { AnimatedLogoText } from "./animated-logo-text"
+import { ThemeToggle } from "./theme-toggle"
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -103,9 +105,9 @@ export function Header() {
           <div ref={logoRef} className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center transition-all">
             <span className="text-white font-bold text-lg">CF</span>
           </div>
-          <span className="hidden sm:block text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent group-hover:opacity-80 transition-opacity">
-            Culinary Fresh
-          </span>
+          <div className="hidden sm:block group-hover:opacity-80 transition-opacity">
+            <AnimatedLogoText />
+          </div>
         </Link>
 
         {/* Desktop Navigation */}
@@ -127,6 +129,9 @@ export function Header() {
 
         {/* Right side actions */}
         <div className="flex items-center gap-4">
+          {/* Theme toggle */}
+          <ThemeToggle />
+
           {/* Mobile menu button */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
