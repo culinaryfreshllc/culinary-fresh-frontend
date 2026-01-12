@@ -136,7 +136,7 @@ export function HeroSection() {
   return (
     <section
       ref={containerRef}
-      className="relative min-h-screen pt-32 pb-12 md:pb-16 overflow-hidden"
+      className="relative min-h-screen pt-44 pb-12 md:pb-16 overflow-hidden flex items-center"
     >
       {/* Animated background with morphing gradient */}
       <div

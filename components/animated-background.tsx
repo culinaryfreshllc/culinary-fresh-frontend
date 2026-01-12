@@ -17,17 +17,17 @@ export function AnimatedBackground() {
         elements.forEach((element, index) => {
             // Strategic placement for 8 elements
             const positions = [
-                // Top area
-                { x: 0.15, y: 0.18 },
-                { x: 0.82, y: 0.15 },
+                // Top area - pushed down to avoid header
+                { x: 0.15, y: 0.25 },
+                { x: 0.82, y: 0.22 },
 
                 // Upper-middle area
-                { x: 0.35, y: 0.35 },
-                { x: 0.70, y: 0.38 },
+                { x: 0.35, y: 0.45 },
+                { x: 0.70, y: 0.48 },
 
                 // Middle area
-                { x: 0.22, y: 0.52 },
-                { x: 0.75, y: 0.55 },
+                { x: 0.22, y: 0.65 },
+                { x: 0.75, y: 0.68 },
 
                 // Bottom area
                 { x: 0.18, y: 0.85 },
