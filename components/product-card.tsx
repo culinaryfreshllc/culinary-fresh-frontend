@@ -24,12 +24,11 @@ export function ProductCard({ product, index }: ProductCardProps) {
     if (!card || prefersReducedMotion) return
 
     const ctx = gsap.context(() => {
-      // Initial reveal animation with 3D rotation
-      gsap.set(card, { opacity: 0, y: 50, rotateX: 15, scale: 0.9 })
+      // Initial reveal animation
+      gsap.set(card, { opacity: 0, y: 50, scale: 0.9 })
       gsap.to(card, {
         opacity: 1,
         y: 0,
-        rotateX: 0,
         scale: 1,
         duration: 1,
         delay: index * 0.15,
@@ -58,7 +57,7 @@ export function ProductCard({ product, index }: ProductCardProps) {
 
     const isMobile = window.innerWidth < 768
 
-    // Card lift with enhanced 3D tilt and glow
+    // Card lift
     gsap.to(cardRef.current, {
       y: -20,
       scale: 1.05,
@@ -66,23 +65,21 @@ export function ProductCard({ product, index }: ProductCardProps) {
       ease: "power3.out",
     })
 
-    // Image zoom with rotation
+    // Image zoom
     gsap.to(imageRef.current, {
       scale: 1.2,
-      rotation: 2,
       duration: 0.8,
       ease: "power2.out",
     })
 
-    // Glow effect
+    // Deep, soft glow visibility
     gsap.to(glowRef.current, {
-      opacity: 0.8,
-      scale: 1.1,
-      duration: 0.5,
+      opacity: 0.9,
+      scaleX: 1.1,
+      scaleY: 1.2,
+      duration: 0.6,
       ease: "power2.out",
     })
-
-
 
     // Sequential star animation with bounce
     if (!isMobile) {
@@ -90,10 +87,9 @@ export function ProductCard({ product, index }: ProductCardProps) {
         if (star && i < Math.floor(product.rating)) {
           gsap.fromTo(
             star,
-            { scale: 1, rotation: 0 },
+            { scale: 1 },
             {
               scale: 1.3,
-              rotation: 360,
               duration: 0.4,
               delay: i * 0.06,
               yoyo: true,
@@ -112,55 +108,27 @@ export function ProductCard({ product, index }: ProductCardProps) {
     gsap.to(cardRef.current, {
       y: 0,
       scale: 1,
-      rotateY: 0,
-      rotateX: 0,
       duration: 0.6,
       ease: "elastic.out(1, 0.5)",
     })
 
     gsap.to(imageRef.current, {
       scale: 1,
-      rotation: 0,
       duration: 0.7,
       ease: "power2.out",
     })
 
+    // Hide glow
     gsap.to(glowRef.current, {
       opacity: 0,
       scale: 1,
       duration: 0.5,
       ease: "power2.out",
     })
-
-
   }
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (prefersReducedMotion || window.innerWidth < 768) return
-
-    const card = cardRef.current as HTMLElement | null
-    if (!card) return
-
-    const rect = card.getBoundingClientRect()
-    const centerX = rect.left + rect.width / 2
-    const centerY = rect.top + rect.height / 2
-
-    const deltaX = (e.clientX - centerX) / (rect.width / 2)
-    const deltaY = (e.clientY - centerY) / (rect.height / 2)
-
-    gsap.to(card, {
-      rotateY: deltaX * 12,
-      rotateX: -deltaY * 12,
-      duration: 0.4,
-      ease: "power2.out",
-    })
-
-    // Move glow with cursor
-    gsap.to(glowRef.current, {
-      x: deltaX * 20,
-      y: deltaY * 20,
-      duration: 0.3,
-    })
+  const handleMouseMove = () => {
+    // Disabled moving animation
   }
 
   return (
@@ -169,25 +137,22 @@ export function ProductCard({ product, index }: ProductCardProps) {
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onMouseMove={handleMouseMove}
-      className="glass border-2 border-white/10 rounded-2xl overflow-hidden hover:border-secondary/50 transition-all duration-500 cursor-pointer group relative"
-      style={{ perspective: "1500px", transformStyle: "preserve-3d" }}
+      className="glass border-2 border-white/10 rounded-2xl hover:border-secondary/50 transition-all duration-500 cursor-pointer group relative hover:z-10 h-full flex flex-col"
     >
-      {/* Glow effect */}
+      {/* Background Glow Effect - Deeper and wider spread at bottom */}
       <div
         ref={glowRef}
-        className="absolute -inset-1 bg-gradient-to-r from-primary/50 via-secondary/50 to-accent/50 rounded-2xl blur-xl opacity-0 -z-10"
+        className="absolute bottom-[-10%] left-[-5%] right-[-5%] h-2/3 bg-gradient-to-t from-primary/40 via-secondary/30 to-transparent rounded-full blur-[60px] opacity-0 -z-10 pointer-events-none"
       />
 
       {/* Image Container */}
-      <div className="relative h-64 sm:h-72 overflow-hidden bg-gradient-to-br from-muted to-muted/50">
+      <div className="relative h-64 sm:h-72 overflow-hidden bg-gradient-to-br from-muted to-muted/50 rounded-t-2xl flex-shrink-0">
         <img
           ref={imageRef}
           src={product.image || "/placeholder.svg"}
           alt={product.name}
           className="w-full h-full object-cover"
         />
-
-
 
         {/* Tag with glassmorphism */}
         <div className="absolute top-3 right-3 z-10">
@@ -198,12 +163,10 @@ export function ProductCard({ product, index }: ProductCardProps) {
             {product.tag}
           </span>
         </div>
-
-
       </div>
 
       {/* Content with enhanced styling */}
-      <div className="p-5 sm:p-6 bg-gradient-to-b from-card/80 to-card backdrop-blur-sm">
+      <div className="p-5 sm:p-6 bg-gradient-to-b from-card/80 to-card backdrop-blur-sm rounded-b-2xl relative flex-grow flex flex-col">
         <p className="text-xs sm:text-sm text-secondary uppercase tracking-wider mb-2 font-bold">
           {product.category}
         </p>
@@ -213,10 +176,8 @@ export function ProductCard({ product, index }: ProductCardProps) {
         </h3>
         <p className="text-xs sm:text-sm text-muted-foreground mb-3 line-clamp-2">{product.description}</p>
 
-
-
         {/* Rating with enhanced stars */}
-        <div className="flex items-center gap-2 mb-5">
+        <div className="flex items-center gap-2 mb-5 mt-auto">
           <div className="flex items-center gap-1">
             {[...Array(5)].map((_, i) => (
               <div
@@ -239,7 +200,11 @@ export function ProductCard({ product, index }: ProductCardProps) {
           </span>
         </div>
 
+        {/* Large, soft gradient portion at the bottom - matches the reference image */}
+        <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-r from-primary/30 via-secondary/30 to-accent/30 rounded-b-2xl opacity-50 group-hover:opacity-80 transition-all duration-700 blur-2xl pointer-events-none" />
 
+        {/* Decorative gradient square at bottom right */}
+        <div className="absolute bottom-0 right-0 w-8 h-8 bg-gradient-to-br from-primary via-secondary to-accent dark:from-primary dark:via-primary dark:to-secondary rounded-tl-2xl rounded-br-2xl opacity-80 group-hover:opacity-100 transition-all duration-300 z-20" />
       </div>
     </div>
   )

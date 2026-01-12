@@ -17,10 +17,17 @@ export function AnimatedLogoText() {
         const letters = containerRef.current.querySelectorAll('.letter')
 
         if (letters.length === 0) return
+        const totalWidth = containerRef.current.offsetWidth
 
         // Set initial state
         letters.forEach((letter) => {
             const element = letter as HTMLElement
+            const offsetLeft = element.offsetLeft
+
+            // Align gradient
+            element.style.backgroundSize = `${totalWidth}px 100%`
+            element.style.backgroundPosition = `-${offsetLeft}px 0`
+
             element.style.opacity = '0'
             element.style.transform = 'scale(0) rotate(-10deg)'
         })
@@ -52,7 +59,7 @@ export function AnimatedLogoText() {
     return (
         <div
             ref={containerRef}
-            className="inline-flex items-center gap-[2px] bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent font-black text-xl"
+            className="relative inline-flex items-center gap-0 font-black text-xl"
             style={{
                 fontWeight: 900,
                 letterSpacing: '-0.02em',
@@ -61,7 +68,7 @@ export function AnimatedLogoText() {
             {text.split('').map((char, index) => (
                 <span
                     key={index}
-                    className="letter inline-block"
+                    className="letter inline-block bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent"
                     style={{
                         opacity: 0,
                         transform: 'scale(0) rotate(-10deg)',

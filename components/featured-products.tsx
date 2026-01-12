@@ -81,7 +81,7 @@ export function FeaturedProducts() {
         </div>
 
         {/* Products Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
           {featuredProducts.map((product, index) => (
             <div
               key={product.id}
@@ -119,8 +119,8 @@ export function FeaturedProducts() {
                       <Star
                         key={i}
                         className={`w-4 h-4 ${i < Math.floor(product.rating)
-                            ? "fill-secondary text-secondary"
-                            : "text-muted"
+                          ? "fill-secondary text-secondary"
+                          : "text-muted"
                           }`}
                       />
                     ))}

@@ -59,17 +59,15 @@ export function Header() {
 
     const handleMouseEnter = () => {
       gsap.to(logo, {
-        scale: 1.05,
-        rotation: 5,
+        scale: 1.1,
         duration: 0.3,
-        ease: "back.out(2)",
+        ease: "power2.out",
       })
     }
 
     const handleMouseLeave = () => {
       gsap.to(logo, {
         scale: 1,
-        rotation: 0,
         duration: 0.3,
         ease: "power2.out",
       })
@@ -101,7 +99,7 @@ export function Header() {
     >
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 group">
+        <Link href="/" className="flex items-center gap-2 group not-magnetic">
           <div ref={logoRef} className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center transition-all">
             <span className="text-white font-bold text-lg">CF</span>
           </div>

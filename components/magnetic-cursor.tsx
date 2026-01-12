@@ -81,8 +81,7 @@ export function MagneticCursor() {
             })
         }
 
-        // Add magnetic effect to all buttons and links
-        const magneticElements = document.querySelectorAll("a, button, .magnetic")
+        const magneticElements = document.querySelectorAll("a:not(.not-magnetic), button:not(.not-magnetic), .magnetic:not(.not-magnetic)")
         magneticElements.forEach((el) => {
             el.addEventListener("mouseenter", handleMouseEnter as EventListener)
             el.addEventListener("mousemove", handleMouseEnter as EventListener)

@@ -96,7 +96,7 @@ export default function ProductsPage() {
 
                 {/* Products Grid */}
                 {filteredProducts.length > 0 ? (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 lg:gap-14">
                     {filteredProducts.map((product, index) => (
                       <ProductCard key={product.id} product={product} index={index} />
                     ))}
@@ -121,7 +121,7 @@ export default function ProductsPage() {
 
           {/* Simple Products Grid (when filters are hidden) */}
           {!showFilters && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-14">
               {products.slice(0, 4).map((product, index) => (
                 <ProductCard key={product.id} product={product} index={index} />
               ))}
@@ -133,7 +133,7 @@ export default function ProductsPage() {
             <div className="text-center mb-8">
               <button
                 onClick={() => setShowFilters(true)}
-                className="inline-flex items-center justify-center px-8 py-3 bg-gradient-to-r from-primary to-primary/70 text-primary-foreground rounded-lg font-semibold hover:shadow-lg transition-all duration-300 transform hover:scale-105 mt-20"
+                className="inline-flex items-center justify-center px-8 py-3 bg-gradient-to-r from-primary to-primary/70 text-primary-foreground rounded-lg font-semibold hover:shadow-lg transition-all duration-300 mt-20"
               >
                 View All Products
               </button>
