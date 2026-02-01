@@ -1,23 +1,83 @@
 "use client"
 
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Star } from "lucide-react"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
-import { products } from "@/lib/product-data"
-import type { Product } from "@/lib/product-data"
+import axiosInstance from "@/lib/axios"
 
 gsap.registerPlugin(ScrollTrigger)
 
-// Select first 4 products as featured
-const featuredProducts = products.slice(0, 4)
+interface ApiProduct {
+  id: string
+  name: string
+  shortDescription: string
+  imageUrl: string
+  categoryIds: string[]
+  categories: { id: string; name: string }[]
+}
+
+interface DisplayProduct {
+  id: string
+  name: string
+  category: string
+  image: string
+  rating: number
+  reviews: number
+  tag: string
+}
 
 export function FeaturedProducts() {
   const containerRef = useRef<HTMLDivElement>(null)
   const cardsRef = useRef<HTMLDivElement[]>([])
+  const [products, setProducts] = useState<DisplayProduct[]>([])
+  const [loading, setLoading] = useState(true)
+  const hasLoadedRef = useRef(false)
 
   useEffect(() => {
-    if (!containerRef.current) return
+    const fetchProducts = async () => {
+      try {
+        const response = await axiosInstance.get("/products", {
+          params: {
+            categoryId: "69660d66d80385216fa2f20a",
+            page: 1,
+            limit: 4,
+          },
+        })
+        const data = response.data
+
+        if (data && data.data) {
+          const mappedProducts = data.data.map((item: ApiProduct) => ({
+            id: item.id,
+            name: item.name,
+            category: item.categories?.[0]?.name || "Fresh",
+            image: item.imageUrl,
+            rating: 4.8,
+            reviews: Math.floor(Math.random() * 100) + 50,
+            tag: "Featured"
+          }))
+          setProducts(mappedProducts)
+        }
+      } catch (error) {
+        console.error("Failed to fetch products:", error)
+      } finally {
+        // Only show loading state on first load
+        if (!hasLoadedRef.current) {
+          setTimeout(() => {
+            setLoading(false)
+            hasLoadedRef.current = true
+          }, 200)
+        } else {
+          setLoading(false)
+        }
+      }
+    }
+
+    fetchProducts()
+  }, [])
+
+  useEffect(() => {
+    if (loading || products.length === 0 || !containerRef.current) return
 
     const ctx = gsap.context(() => {
       cardsRef.current.forEach((card, index) => {
@@ -42,7 +102,7 @@ export function FeaturedProducts() {
     }, containerRef)
 
     return () => ctx.revert()
-  }, [])
+  }, [loading, products])
 
   const handleMouseEnter = (index: number) => {
     if (!cardsRef.current[index]) return
@@ -82,58 +142,67 @@ export function FeaturedProducts() {
 
         {/* Products Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
-          {featuredProducts.map((product, index) => (
-            <div
-              key={product.id}
-              ref={(el) => {
-                if (el) cardsRef.current[index] = el as HTMLDivElement
-              }}
-              onMouseEnter={() => handleMouseEnter(index)}
-              onMouseLeave={() => handleMouseLeave(index)}
-              className="group bg-card rounded-xl overflow-hidden border border-border hover:border-secondary/50 transition-all duration-300 cursor-pointer"
-            >
-              {/* Image Container */}
-              <div className="relative h-56 sm:h-64 overflow-hidden bg-muted">
-                <img
-                  src={product.image || "/placeholder.svg"}
-                  alt={product.name}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                />
-                <div className="absolute top-3 right-3">
-                  <span className="px-3 py-1 text-xs font-semibold text-primary-foreground bg-primary rounded-full">
-                    {product.tag}
-                  </span>
-                </div>
-              </div>
-
-              {/* Content */}
-              <div className="p-4 sm:p-5">
-                <p className="text-xs sm:text-sm text-muted-foreground uppercase tracking-wide mb-2">
-                  {product.category}
-                </p>
-                <h3 className="text-lg sm:text-xl font-bold text-foreground mb-3 line-clamp-2">{product.name}</h3>
-                {/* Rating */}
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="flex items-center gap-1">
-                    {[...Array(5)].map((_, i) => (
-                      <Star
-                        key={i}
-                        className={`w-4 h-4 ${i < Math.floor(product.rating)
-                          ? "fill-secondary text-secondary"
-                          : "text-muted"
-                          }`}
-                      />
-                    ))}
-                  </div>
-                  <span className="text-xs text-muted-foreground">
-                    {product.rating} ({product.reviews})
-                  </span>
-                </div>
-
-
+          {loading && products.length === 0 ? (
+            <div className="col-span-full flex items-center justify-center py-20">
+              <div className="flex flex-col items-center gap-4">
+                <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+                <p className="text-muted-foreground text-sm">Loading featured products...</p>
               </div>
             </div>
-          ))}
+          ) : (
+            products.map((product, index) => (
+              <div
+                key={product.id}
+                ref={(el) => {
+                  if (el) cardsRef.current[index] = el as HTMLDivElement
+                }}
+                onMouseEnter={() => handleMouseEnter(index)}
+                onMouseLeave={() => handleMouseLeave(index)}
+                className="group bg-card rounded-xl overflow-hidden border border-border hover:border-secondary/50 transition-all duration-300 cursor-pointer"
+              >
+                {/* Image Container */}
+                <div className="relative h-56 sm:h-64 overflow-hidden bg-muted">
+                  <img
+                    src={product.image || "/placeholder.svg"}
+                    alt={product.name}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                  />
+                  <div className="absolute top-3 right-3">
+                    <span className="px-3 py-1 text-xs font-semibold text-primary-foreground bg-primary rounded-full">
+                      {product.tag}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Content */}
+                <div className="p-4 sm:p-5">
+                  <p className="text-xs sm:text-sm text-muted-foreground uppercase tracking-wide mb-2">
+                    {product.category}
+                  </p>
+                  <h3 className="text-lg sm:text-xl font-bold text-foreground mb-3 line-clamp-2">{product.name}</h3>
+                  {/* Rating */}
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="flex items-center gap-1">
+                      {[...Array(5)].map((_, i) => (
+                        <Star
+                          key={i}
+                          className={`w-4 h-4 ${i < Math.floor(product.rating)
+                            ? "fill-secondary text-secondary"
+                            : "text-muted"
+                            }`}
+                        />
+                      ))}
+                    </div>
+                    <span className="text-xs text-muted-foreground">
+                      {product.rating} ({product.reviews})
+                    </span>
+                  </div>
+
+
+                </div>
+              </div>
+            ))
+          )}
         </div>
 
         {/* View All Button */}

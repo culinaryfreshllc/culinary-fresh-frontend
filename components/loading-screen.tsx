@@ -48,16 +48,19 @@ export function LoadingScreen() {
         // Animate exit
         const hideTimer = setTimeout(() => {
             if (containerRef.current) {
+                // Add pointer-events-none immediately to prevent blocking
+                containerRef.current.style.pointerEvents = 'none'
+
                 gsap.to(containerRef.current, {
                     opacity: 0,
                     scale: 1.1,
                     filter: "blur(20px)",
-                    duration: 0.8,
+                    duration: 0.6,
                     ease: "power2.inOut",
                     onComplete: () => setIsLoading(false),
                 })
             }
-        }, 3500)
+        }, 2500)
 
         // Entrance animations
         if (logoRef.current && textRef.current) {

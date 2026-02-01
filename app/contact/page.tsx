@@ -1,42 +1,16 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useEffect, useRef } from "react"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
-import { Mail, Phone, MapPin, Clock, Send } from "lucide-react"
+import { ContactForm } from "@/components/contact-form"
+import { Mail, Phone, MapPin, Clock } from "lucide-react"
 
 gsap.registerPlugin(ScrollTrigger)
 
 export default function ContactPage() {
-  const [formState, setFormState] = useState({
-    name: "",
-    email: "",
-    subject: "",
-    message: "",
-  })
-
-  const [isSubmitted, setIsSubmitted] = useState(false)
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target
-    setFormState((prev) => ({ ...prev, [name]: value }))
-  }
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    // Here you would typically send the form data to your backend
-    console.log("Form submitted:", formState)
-    setIsSubmitted(true)
-
-    // Reset form after 3 seconds
-    setTimeout(() => {
-      setFormState({ name: "", email: "", subject: "", message: "" })
-      setIsSubmitted(false)
-    }, 3000)
-  }
-
   const contactInfoRef = useRef<HTMLDivElement>(null)
   const formSectionRef = useRef<HTMLDivElement>(null)
 
@@ -94,7 +68,7 @@ export default function ContactPage() {
           <div className="max-w-7xl mx-auto">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
               {/* Contact Information */}
-              <div className="space-y-6">
+              <div className="space-y-6" ref={contactInfoRef}>
                 {/* Address */}
                 <div className="bg-card border border-border rounded-xl p-6 hover:border-secondary/50 transition-colors">
                   <div className="flex items-start gap-4">
@@ -165,85 +139,10 @@ export default function ContactPage() {
 
               {/* Contact Form */}
               <div className="lg:col-span-2" ref={formSectionRef}>
-                <form
-                  onSubmit={handleSubmit}
-                  className="bg-card border border-border rounded-xl p-6 md:p-8"
-                >
+                <div className="bg-card border border-border rounded-xl p-6 md:p-8">
                   <h2 className="text-2xl font-bold mb-6 text-foreground">Send us a Message</h2>
-
-                  {isSubmitted && (
-                    <div className="mb-6 p-4 bg-primary/10 border border-primary/50 rounded-lg">
-                      <p className="text-primary font-semibold">Thank you! Your message has been sent successfully.</p>
-                    </div>
-                  )}
-
-                  <div className="space-y-4 md:space-y-6">
-                    {/* Name */}
-                    <div>
-                      <label className="block text-sm font-medium text-foreground mb-2">Full Name</label>
-                      <input
-                        type="text"
-                        name="name"
-                        value={formState.name}
-                        onChange={handleChange}
-                        placeholder="John Doe"
-                        required
-                        className="w-full px-4 py-2 bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
-                      />
-                    </div>
-
-                    {/* Email */}
-                    <div>
-                      <label className="block text-sm font-medium text-foreground mb-2">Email Address</label>
-                      <input
-                        type="email"
-                        name="email"
-                        value={formState.email}
-                        onChange={handleChange}
-                        placeholder="john@example.com"
-                        required
-                        className="w-full px-4 py-2 bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
-                      />
-                    </div>
-
-                    {/* Subject */}
-                    <div>
-                      <label className="block text-sm font-medium text-foreground mb-2">Subject</label>
-                      <input
-                        type="text"
-                        name="subject"
-                        value={formState.subject}
-                        onChange={handleChange}
-                        placeholder="How can we help?"
-                        required
-                        className="w-full px-4 py-2 bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
-                      />
-                    </div>
-
-                    {/* Message */}
-                    <div>
-                      <label className="block text-sm font-medium text-foreground mb-2">Message</label>
-                      <textarea
-                        name="message"
-                        value={formState.message}
-                        onChange={handleChange}
-                        placeholder="Your message here..."
-                        rows={5}
-                        required
-                        className="w-full px-4 py-2 bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-colors resize-none"
-                      />
-                    </div>
-
-                    {/* Submit Button */}
-                    <button
-                      type="submit"
-                      className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-primary to-primary/70 text-primary-foreground rounded-lg font-semibold hover:shadow-lg transition-all duration-300 transform hover:scale-105 active:scale-95"
-                    >
-                      <Send className="w-5 h-5" />
-                      Send Message
-                    </button>
-                  </div>
-                </form>
+                  <ContactForm />
+                </div>
               </div>
             </div>
 

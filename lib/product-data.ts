@@ -150,8 +150,6 @@ export type Product = (typeof products)[0]
 export const categories = ["All", "Fish", "Meat", "Seafood"]
 export const sortOptions = [
   { value: "featured", label: "Featured" },
-  { value: "price-low", label: "Price: Low to High" },
-  { value: "price-high", label: "Price: High to Low" },
   { value: "rating", label: "Highest Rated" },
   { value: "newest", label: "Newest" },
 ]

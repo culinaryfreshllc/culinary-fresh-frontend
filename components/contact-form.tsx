@@ -4,7 +4,8 @@ import type React from "react"
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { MessageSquare } from "lucide-react"
+import { MessageSquare, Loader2, CheckCircle2, AlertCircle } from "lucide-react"
+import axiosInstance from "@/lib/axios"
 
 export function ContactForm() {
   const [formData, setFormData] = useState({
@@ -13,7 +14,9 @@ export function ContactForm() {
     subject: "",
     message: "",
   })
-  const [submitted, setSubmitted] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+  const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle")
+  const [errorMessage, setErrorMessage] = useState("")
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
@@ -23,22 +26,51 @@ export function ContactForm() {
     }))
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Here you would typically send the form data to a backend
-    console.log("Form submitted:", formData)
-    setSubmitted(true)
-    setTimeout(() => {
-      setFormData({ name: "", email: "", subject: "", message: "" })
-      setSubmitted(false)
-    }, 3000)
+    setSubmitting(true)
+    setSubmitStatus("idle")
+    setErrorMessage("")
+
+    try {
+      const response = await axiosInstance.post("/contact-us", formData)
+
+      if (response.data && response.data.message) {
+        setSubmitStatus("success")
+        // Reset form after successful submission
+        setTimeout(() => {
+          setFormData({ name: "", email: "", subject: "", message: "" })
+          setSubmitStatus("idle")
+        }, 5000)
+      }
+    } catch (error: any) {
+      console.error("Failed to submit contact form:", error)
+      setSubmitStatus("error")
+      setErrorMessage(error.response?.data?.message || "Failed to send message. Please try again.")
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {submitted && (
-        <div className="p-4 bg-primary/10 border border-primary text-primary rounded-lg">
-          Thank you for your message! We'll get back to you soon.
+      {submitStatus === "success" && (
+        <div className="p-4 bg-primary/10 border border-primary text-primary rounded-lg flex items-center gap-3 animate-slide-in-up">
+          <CheckCircle2 className="w-5 h-5 flex-shrink-0" />
+          <div>
+            <p className="font-semibold">Message sent successfully!</p>
+            <p className="text-sm opacity-90">We'll get back to you soon.</p>
+          </div>
+        </div>
+      )}
+
+      {submitStatus === "error" && (
+        <div className="p-4 bg-destructive/10 border border-destructive text-destructive rounded-lg flex items-center gap-3 animate-slide-in-up">
+          <AlertCircle className="w-5 h-5 flex-shrink-0" />
+          <div>
+            <p className="font-semibold">Failed to send message</p>
+            <p className="text-sm opacity-90">{errorMessage}</p>
+          </div>
         </div>
       )}
 
@@ -54,7 +86,8 @@ export function ContactForm() {
             value={formData.name}
             onChange={handleChange}
             required
-            className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+            disabled={submitting}
+            className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed"
             placeholder="Your name"
           />
         </div>
@@ -69,7 +102,8 @@ export function ContactForm() {
             value={formData.email}
             onChange={handleChange}
             required
-            className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+            disabled={submitting}
+            className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed"
             placeholder="your@email.com"
           />
         </div>
@@ -79,21 +113,17 @@ export function ContactForm() {
         <label htmlFor="subject" className="block text-sm font-medium text-foreground mb-2">
           Subject
         </label>
-        <select
+        <input
+          type="text"
           id="subject"
           name="subject"
           value={formData.subject}
           onChange={handleChange}
           required
-          className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-        >
-          <option value="">Select a subject</option>
-          <option value="inquiry">Product Inquiry</option>
-          <option value="order">Order Related</option>
-          <option value="delivery">Delivery Issue</option>
-          <option value="feedback">Feedback</option>
-          <option value="other">Other</option>
-        </select>
+          disabled={submitting}
+          className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed"
+          placeholder="What is this about?"
+        />
       </div>
 
       <div>
@@ -106,15 +136,29 @@ export function ContactForm() {
           value={formData.message}
           onChange={handleChange}
           required
+          disabled={submitting}
           rows={6}
-          className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary resize-none"
+          className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary resize-none disabled:opacity-50 disabled:cursor-not-allowed"
           placeholder="Tell us how we can help..."
         />
       </div>
 
-      <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold">
-        Send Message
-        <MessageSquare className="w-4 h-4 ml-2" />
+      <Button
+        type="submit"
+        disabled={submitting}
+        className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        {submitting ? (
+          <>
+            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+            Sending...
+          </>
+        ) : (
+          <>
+            Send Message
+            <MessageSquare className="w-4 h-4 ml-2" />
+          </>
+        )}
       </Button>
     </form>
   )

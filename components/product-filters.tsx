@@ -1,19 +1,24 @@
 "use client"
 
 import { useTransition } from "react"
-import { categories } from "@/lib/product-data"
 
-interface ProductFiltersProps {
-  selectedCategory: string
-  onCategoryChange: (category: string) => void
+interface Category {
+  id: string
+  name: string
 }
 
-export function ProductFilters({ selectedCategory, onCategoryChange }: ProductFiltersProps) {
+interface ProductFiltersProps {
+  categories: Category[]
+  selectedCategory: string | null
+  onCategoryChange: (categoryId: string | null) => void
+}
+
+export function ProductFilters({ categories, selectedCategory, onCategoryChange }: ProductFiltersProps) {
   const [isPending, startTransition] = useTransition()
 
-  const handleCategoryClick = (category: string) => {
+  const handleCategoryClick = (categoryId: string | null) => {
     startTransition(() => {
-      onCategoryChange(category)
+      onCategoryChange(categoryId)
     })
   }
 
@@ -23,17 +28,27 @@ export function ProductFilters({ selectedCategory, onCategoryChange }: ProductFi
       <div className="bg-card border border-border rounded-lg p-4 md:p-6">
         <h3 className="font-bold text-lg mb-4 text-foreground">Category</h3>
         <div className="space-y-2">
+          <button
+            onClick={() => handleCategoryClick(null)}
+            disabled={isPending}
+            className={`w-full text-left px-4 py-2 rounded-lg transition-all duration-200 ${selectedCategory === null
+                ? "bg-primary text-primary-foreground font-semibold"
+                : "bg-muted text-foreground hover:bg-primary/10"
+              } disabled:opacity-50`}
+          >
+            All
+          </button>
           {categories.map((category) => (
             <button
-              key={category}
-              onClick={() => handleCategoryClick(category)}
+              key={category.id}
+              onClick={() => handleCategoryClick(category.id)}
               disabled={isPending}
-              className={`w-full text-left px-4 py-2 rounded-lg transition-all duration-200 ${selectedCategory === category
+              className={`w-full text-left px-4 py-2 rounded-lg transition-all duration-200 ${selectedCategory === category.id
                   ? "bg-primary text-primary-foreground font-semibold"
                   : "bg-muted text-foreground hover:bg-primary/10"
                 } disabled:opacity-50`}
             >
-              {category}
+              {category.name}
             </button>
           ))}
         </div>

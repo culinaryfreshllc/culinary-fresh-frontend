@@ -52,7 +52,10 @@ export default function RootLayout({
         <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
       </head>
-      <body className={`${poppins.variable} font-sans antialiased bg-background text-foreground`}>
+      <body
+        className={`${poppins.variable} font-sans antialiased bg-background text-foreground`}
+        suppressHydrationWarning
+      >
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
